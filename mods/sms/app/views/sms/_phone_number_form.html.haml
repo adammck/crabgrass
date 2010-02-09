@@ -1,0 +1,10 @@
+%p
+  %div
+    %label{ :for => "user_phone_number" }
+      = I18n.t(:phone_number)
+
+  = text_field :user, :phone_number
+
+  %div.field-help
+    %p
+      = I18n.t(:phone_number_why)

@@ -1,0 +1,15 @@
+== Sms
+
+This Crabgrass mod allows users to opt-in to receive SMS notifications
+when they receive a message, and respond directly via SMS.
+
+
+== Usage
+
+Add to config/crabgrass.ENVIRONMENT.yml:
+  enabled_mods:
+    - sms
+
+Run SMS Migrations:
+  $ ./script/generate plugin_migration
+  $ rake db:migrate

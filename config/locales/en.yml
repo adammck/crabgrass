@@ -1703,3 +1703,10 @@ en:
 
   page_make_public_link: "make public"
   page_make_public_pending_link: "make public (pending)"
+
+  ##
+  ## SMS MOD
+  ##
+
+  phone_number: Phone Number
+  phone_number_why: This phone number will never be displayed on this website. It is only used when sending and/or receiving SMS.
