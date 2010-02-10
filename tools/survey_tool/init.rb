@@ -9,7 +9,9 @@ PageClassRegistrar.add(
 require File.join(File.dirname(__FILE__), 'lib',
                   'survey_user_extension')
 
-apply_mixin_to_model("User", SurveyUserExtension)
+Dispatcher.to_prepare do
+  apply_mixin_to_model(User, SurveyUserExtension)
+end
 
 #self.override_views = true
 self.load_once = false
