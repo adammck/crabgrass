@@ -83,8 +83,30 @@ Engines::Plugin.class_eval do
   #
   def apply_mixin_to_model(model_class, mixin_module)
     Dispatcher.to_prepare {
-      model_class  = Kernel.const_get(model_class.to_s)  # \ weird, yet
-      mixin_module = Kernel.const_get(mixin_module.to_s) # / required.
+
+      # some existing code calls this function with strings, rather than
+      # actual Class or Module instances. coercing it with const_get is
+      # a band-aid, but does not support nested (A::B::C) objects.
+
+      unless model_class.is_a?(Class)
+        Engines.logger.warn(
+          "apply_mixin_to_model: %s (%s) is not a Class" %
+          [model_class.inspect, model_class.class])
+
+        model_class = Kernel.const_get(model_class)
+      end
+
+      unless mixin_module.is_a?(Module)
+        Engines.logger.warn(
+          "apply_mixin_to_model: %s (%s) is not a Module" %
+          [mixin_module.inspect, mixin_module.class])
+
+        mixin_module = Kernel.const_get(mixin_module.to_s)
+      end
+
+      # end of coercian hackery
+
+
       if modname = mixin_module.const_get("ClassMethods")
         model_class.send(:extend, modname)
       end rescue NameError
