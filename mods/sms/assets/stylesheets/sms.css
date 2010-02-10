@@ -1,0 +1,24 @@
+span.verified,
+span.unverified {
+  font-size: 10px;
+  padding: 2px 4px 2px 22px;
+  border: 1px solid #000;
+
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+
+  float: none;
+}
+
+  span.verified {
+    background: #dfd url(/images/png/16/ok.png) no-repeat 2px 50%;
+    border-color: #bfb;
+    color: #0d0;
+  }
+
+  span.unverified {
+    background: #fdd url(/images/png/16/cancel.png) no-repeat 2px 50%;
+    border-color: #fbb;
+    color: #d00;
+  }
