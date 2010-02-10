@@ -3,7 +3,16 @@
     %label{ :for => "user_phone_number" }
       = I18n.t(:phone_number)
 
-  = text_field :user, :phone_number
+  %div
+    = text_field :user, :phone_number
+
+    - if @user.phone_number_verified
+      %span.verified
+        Verified
+
+    - else
+      %span.unverified
+        Unverified
 
   %div.field-help
     %p
