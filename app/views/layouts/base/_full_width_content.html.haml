@@ -22,13 +22,15 @@
         #centered-nav
           = yield :third_nav
 
-  /
-  / misc placeholder
-  /
-  - if yield :misc_header
-    = yield :misc_header
 
   #content-wrap
+    /
+    / misc placeholder
+    /
+    - if yield :misc_header
+      = yield :misc_header
+  
+  
     - if yield :browse_content
       %section#browse-content
         = yield :browse_content
@@ -43,7 +45,7 @@
 
     - elsif yield :left_sidebar
 
-      %aside#sidebar-nav
+      %aside#sidebar.left
         = yield :left_sidebar
       #main-content-right
         = yield
