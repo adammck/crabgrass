@@ -1,3 +1,6 @@
+#!/usr/bin/env ruby
+# vim: et ts=2 sts=2 sw=2
+
 module UserExtension
   module Sms
     def self.add_to_class_definition
