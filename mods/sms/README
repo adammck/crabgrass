@@ -6,10 +6,26 @@ when they receive a message, and respond directly via SMS.
 
 == Usage
 
+Install the clickatell Gem:
+  $ gem install clickatell
+
 Add to config/crabgrass.ENVIRONMENT.yml:
   enabled_mods:
     - sms
 
+Create config/clickatell.yml:
+  api_key:  YOUR_API_KEY
+  username: YOUR_USERNAME
+  password: YOUR_PASSWORD
+
 Run SMS Migrations:
   $ ./script/generate plugin_migration
   $ rake db:migrate
+
+
+== Note on SMS Gateways
+
+Currently, only Clickatell is supported. There's no technical reason for
+this, other than I'm already familiar with the API. To use a different
+gateway, you'll have to write your own backend. But that's quite easy.
+Take a look in lib/backends.
