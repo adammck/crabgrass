@@ -28,38 +28,36 @@ module UserExtension
         return None unless\
           phone_number
 
-        conf = SmsMod::CLICKATELL_CONFIG
-        api = Clickatell::API.authenticate(
-          conf["api_key"], conf["username"], conf["password"])
-
-        begin
-          api.send_message(
-            phone_number, text)
-
-        # the message couldn't be sent
-        rescue Clickatell::API::Error => err
-
-          Engines.logger.warn(
-            "SMS could not be sent. Clickatell Says: %s (code: %s)" %
-            [err.message.inspect, err.code])
-
-          # Error 114: "Cannot route message"
-          # the number is probably invalid
-          if err.code == 114
-          end
-
-          return nil
-        end
+        return SmsMod::send_sms(
+            phone_number,
+            text)
       end
 
       private
 
+      def generate_phone_number_verification_code(length=4)
+
+        # only use easily distinguishable characters in verification
+        # codes (i removed <0OQ>, <1i>, <4A>, <5S>, <8B>, <UV> from the
+        # usual A-Z + 0-9, and avoided lower-case altogether)
+        chars = %w"2 3 6 7 9 C D E F G H J K L M N P Q R T W X Y Z"
+
+        # rather than generating the string _truly_ randomly, shuffle
+        # the order of the characters and pluck out the first *length*
+        # of them (to avoid duplicate characters)
+        chars.sort_by { rand }[0, length].join
+      end
+
       def verify_new_phone_number
         if phone_number_changed?
           @phone_number_verified = false
-          send_sms("Test from Crabgrass")
+          send_sms(
+            "To verify your phone number, please respond: %s" %
+            generate_phone_number_verification_code)
         end
 
+        # we must return true, to avoid cancelling the save. we're not
+        # actually validating anything here, just resetting the flag
         true
       end
     end

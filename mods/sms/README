@@ -6,26 +6,41 @@ when they receive a message, and respond directly via SMS.
 
 == Usage
 
-Install the clickatell Gem:
-  $ gem install clickatell
+  Run SMS Migrations:
+    $ ./script/generate plugin_migration
+    $ rake db:migrate
 
-Add to config/crabgrass.ENVIRONMENT.yml:
-  enabled_mods:
-    - sms
-
-Create config/clickatell.yml:
-  api_key:  YOUR_API_KEY
-  username: YOUR_USERNAME
-  password: YOUR_PASSWORD
-
-Run SMS Migrations:
-  $ ./script/generate plugin_migration
-  $ rake db:migrate
+  Add to config/crabgrass.ENVIRONMENT.yml:
+    enabled_mods:
+      - sms
 
 
-== Note on SMS Gateways
+  === Twilio
 
-Currently, only Clickatell is supported. There's no technical reason for
-this, other than I'm already familiar with the API. To use a different
-gateway, you'll have to write your own backend. But that's quite easy.
-Take a look in lib/backends.
+  If your users are based in the United States, I recommend that you use
+  the Twilio backend. It's very quick and easy to get started.
+
+  Create an account:
+    https://www.twilio.com/try-twilio
+
+  Install the twiliolib Gem:
+    $ gem install twiliolib -s http://gemcutter.org
+
+  Create config/sms.yml:
+    development:
+      backend:     twilio
+      account_sid: YOUR_ACCOUNT_SID
+      auth_token:  YOUR_AUTH_TOKEN
+
+
+  === Clickatell
+
+  Install the clickatell Gem:
+    $ gem install clickatell
+
+  Create config/sms.yml:
+    development:
+      backend:  clickatell
+      api_key:  YOUR_API_KEY
+      username: YOUR_USERNAME
+      password: YOUR_PASSWORD
