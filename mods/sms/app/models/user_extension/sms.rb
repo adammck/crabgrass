@@ -6,6 +6,15 @@ module UserExtension
     def self.add_to_class_definition
       lambda do
 
+        # perform some very loose validation of the phone number field
+        # before saving it. the backend will do it properly when we try
+        # to send an sms. (but it's too late, by then!)
+        validates_format_of(
+          :phone_number,
+          :allow_blank => true,
+          :with        => /\A(\+[\d\-])\Z/i,
+          :message     => "is not a valid phone number")
+
         # protect the :phone_number_verified field, to prevent sneaky
         # users from skipping verification by POSTing it to /user/save
         attr_protected :phone_number_verified
