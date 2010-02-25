@@ -100,8 +100,8 @@ form.mini_search table {
 <% end %>
 
 <% content_for :misc_header do %> 
-  <div id="welcome-container" class='full-width'>
-    <ul id="welcome-links"class='full-width'>
+  <div id="welcome-container">
+    <ul id="welcome-links">
       <li>
         <%= [ welcome_box_link, create_group_link, contribute_link ].join('<li></li>') %>
       </li>
@@ -116,7 +116,6 @@ form.mini_search table {
   </div>
 <% end %>
 
-<% @title_box = capture do %>
 <table>
 <tr>
   <td>
@@ -127,16 +126,18 @@ form.mini_search table {
   </td>
 </tr>
 </table>
+
+<h3>
+  <span class="right"><%= link_to(I18n.t(:edit), groups_menu_items_url(:action => :index), :class=>'small_icon pencil_16') if may_edit_menu? %></span>
+</h3>
+
 <ul class="navbar">
   <%= render :partial => 'navbar_item', :collection => @group.menu_items %>
 </ul>
-&nbsp;<%= link_to(I18n.t(:edit), groups_menu_items_url(:action => :index), :class=>'small_icon pencil_16') if may_edit_menu? %>
-<% end %>
-
 
 <%- if @announcements.any? %>
   <div class='section'>
-    <%= render :partial => 'announcement_page/list'  %>
+    <%= render :partial => 'announcement_page/announcements'  %>
   </div>
 <%- end -%>
 

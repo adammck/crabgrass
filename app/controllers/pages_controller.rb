@@ -60,11 +60,12 @@ class PagesController < ApplicationController
 
   # This is a workaround as long as we do not have :only => :index for resources.
   def show
-    @path=params[:id]
+    @path = parse_filter_path(params[:id])
     index
   end
 
   def index
+    @path = parse_filter_path(params[:path])
     if @path.empty?
       redirect_to my_work_me_pages_url
     else
@@ -73,6 +74,7 @@ class PagesController < ApplicationController
   end
 
   def all
+    params[:view] ||= 'networks'
     @path.default_sort('updated_at')
     fetch_pages_for @path
     rss_for_collection(all_me_pages_path, :all_pages_tab)
@@ -86,10 +88,13 @@ class PagesController < ApplicationController
     rss_for_collection(my_work_me_pages_path, :my_work_tab)
   end
 
-  def notification
-    path = parse_filter_path("/notified/#{current_user.id}")
+  def mark
+    mark_as = params[:as].to_sym
+    Page.flag_all(params[:pages], :as => mark_as, :by => current_user)
+    params[:view] ||= 'work'
+    path = parse_filter_path("/#{params[:view]}/#{current_user.id}")
     fetch_pages_for path
-    rss_for_collection(notification_me_pages_path, :notification_tab)
+    render :partial => '/pages/content', :locals => {:view_base_path => view_path_from_referer}
   end
 
   protected
@@ -123,10 +128,17 @@ class PagesController < ApplicationController
     add_user_participations(@pages) if logged_in?
   end
 
+  # given an array of pages, find the corresponding user_participation records
+  # and associate each participtions with the correct page.
+  # afterwards, page.flag[:user_participation] should hold current_user's
+  # participation for page.
   def add_user_participations(pages)
     pages_by_id = {}
-    pages.each{|page|pages_by_id[page.id] = page}
-    uparts = UserParticipation.find(:all, :conditions => ['user_id = ? AND page_id IN (?)',current_user.id,pages_by_id.keys])
+    pages.each do |page|
+      pages_by_id[page.id] = page
+    end
+    uparts = UserParticipation.find :all,
+      :conditions => ['user_id = ? AND page_id IN (?)', current_user.id, pages_by_id.keys]
     uparts.each do |part|
       pages_by_id[part.page_id].flag[:user_participation] = part
     end
@@ -140,4 +152,13 @@ class PagesController < ApplicationController
       :image => avatar_url(:id => @user.try.avatar_id||0, :size => 'huge')
     )
   end
+
+  def view_path_from_referer
+    case referer
+    when /me\/pages\/all/ then all_me_pages_path
+    when /me\/pages\/my_work/ then my_work_me_pages_path
+    else my_work_me_pages_path
+    end
+  end
+
 end

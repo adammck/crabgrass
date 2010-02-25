@@ -1,6 +1,6 @@
-= render :partial => 'common/action_bar', :locals => {:settings => action_bar_settings, :view_path => requests_path}
-
-- action_bar_form(mark_requests_path, requests_path, action_bar_settings) do
+= action_bar(action_bar_settings)
+- action_bar_form(mark_requests_path) do
+  = render :partial => '/common/action_bar/hidden_form_fields'
   %div
     %table#requests.pretty
       = render :partial => 'request', :collection => @requests

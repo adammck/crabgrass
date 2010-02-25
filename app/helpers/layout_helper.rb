@@ -4,8 +4,8 @@ module LayoutHelper
   ## DISPLAYING BREADCRUMBS and CONTEXT
   ##
 
-  def link_to_breadcrumbs(min_length = 3)
-    if @breadcrumbs and @breadcrumbs.length >= min_length
+  def link_to_breadcrumbs
+    if @breadcrumbs and @breadcrumbs.length >= breadcrumb_min_length
       content_tag(:section, @breadcrumbs.collect{|b| content_tag(:a, b[0], :href => b[1])}.join(' &raquo; '), :class => 'breadcrumb')
     else
       ""
@@ -14,6 +14,10 @@ module LayoutHelper
 
   def first_breadcrumb
     @breadcrumbs.first.first if @breadcrumbs.any?
+  end
+
+  def breadcrumb_min_length
+    controller?(:search) ? 2 : 3
   end
 
   ##
@@ -308,17 +312,19 @@ module LayoutHelper
  #     end
  #   else
       # no image
-      content_tag :h2, current_site.title, :class => 'site_title'
+      content_tag :h2, current_site.title
       # <h2><%= current_site.title %></h2>
  #   end
   end
-  
+
   def masthead_container
     locals = {}
     appearance = current_site.custom_appearance
     if appearance and appearance.masthead_asset and current_site.custom_appearance.masthead_enabled
       height = appearance.masthead_asset.height
-      locals[:section_style] = "height: #{height}px"
+      bgcolor = (appearance.masthead_background_parameter == 'white') ? '' : '#'
+      bgcolor = bgcolor+appearance.masthead_background_parameter
+      locals[:section_style] = "background: #{bgcolor}; height: #{height}px"
       locals[:style] = "background-image: url(#{appearance.masthead_asset.url}); height: #{height}px;"
       locals[:render_title] = false
     else

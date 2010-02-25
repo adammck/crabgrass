@@ -110,7 +110,15 @@ en:
   not_found_description: "Sorry, we could not find what you were looking for."
   unknown: "Unknown"
   loadingdotdotdot: "Loading..."
+
   search_headline: "Search"
+  search_input_caption: "Search for pages"
+  search_this_group: "this group only"
+  search_this_person: "this person only"
+  search_link: "Search"
+
+  search_description: Search through all pages you have access to
+
   see_more_link: "More"
   see_all_link: "See All"
   details_link: "Details"
@@ -166,6 +174,8 @@ en:
   success: "Success"
   error: "Error"
   status: "Status"
+
+  optional_message: "optional message"
 
 
   ##
@@ -510,6 +520,7 @@ en:
   upload_zip_file_link: "Upload a ZIP-File"
   upload_images_link: "Upload Images"
   too_tall_image_error: "Uploaded image is too tall ({{count}} pixels is the max height)"
+  too_wide_image_error: "Uploaded image must be exactly  {{count}} pixels wide"
   cant_detect_image_height_error: "Can't detect image height. Either the image is corrupted or the server has experienced an error"
   upload_a_zip_file_link: "Upload a ZIP-File"
   upload_images_link: "Upload"
@@ -538,13 +549,13 @@ en:
   my_inbox_headline: "My Inbox"
 
   me_trash_link: "Trash"
-  me_search_link: "Search"
   me_tasks_link: "Tasks"
   my_world_heading: "My World"
 
   my_pages: "My Pages"
   my_dashboard: "My Dashboard"
   my_work_headline: "My Work"
+
   view_work_pages_option: "All My Work Pages"
   view_watched_pages_option: "My Watched Pages"
   view_editor_pages_option: "My Page Edits"
@@ -554,13 +565,20 @@ en:
   view_networks_pages_option: "My World"
   view_groups_pages_option: "My Groups and Me"
 
+  view_work_pages_description: "Pages that you own, participated in, or are watching."
+  view_watched_pages_description: "Pages that you are watching."
+  view_editor_pages_description: "Pages you participated in."
+  view_owner_pages_description: "Pages you own."
+  view_unread_pages_description: "Unread pages that you own, participated in, or are watching."
+  view_public_pages_description: "All pages that you have access too, including public pages."
+  view_networks_pages_description: "All pages of your groups and networks and those shared with all users."
+  view_groups_pages_description: "All pages of your groups and your own pages."
+
   my_tasks: "Tasks"
   my_tasks_headline: "My Tasks"
   my_tasks_description: Task lists I have access to
   my_pending_tasks_link: "Pending"
   my_completed_tasks_link: "Completed"
-
-  my_search_headline: "Search"
 
   my_messages_headline: "My Messages"
 
@@ -573,7 +591,6 @@ en:
   public_profile: "Public Profile"
 
   create_task_list: create new task list
-  me_search_description: Search through all pages you have access to
   inbox_description: Inbox of pages I am actively participating in or watching for changes
   toggle_selection: Toggle Selection
   remove_from_inbox: Remove from inbox
@@ -607,10 +624,13 @@ en:
   messages_mark_as_read_link: "Read"
   messages_mark_as_unread_link: "Unread"
 
-  message_recipient_name_input_caption: 'To: Type Name'
+  message_recipient_name_input_caption: 'To: Friends and Peers'
   message_recipient_name_caption: 'To: {{user}}'
   message_to_self_error: "Can't talk to yourself"
   message_cant_perster_error: "Only friends may send messages to {{user}}"
+
+  message_you_wrote_caption: "You wrote:"
+  message_user_wrote_caption: "{{user}} wrote:"
   ##
   ## PROFILE
   ##
@@ -645,6 +665,7 @@ en:
   organizational_role: organizational role
   descriptions: Descriptions
   add_description: Add Description
+  phone_number: Phone Number
   phone_numbers: Phone Numbers
   add_phone_number: Add Phone Number
   email_addresses: Email Addresses
@@ -765,7 +786,6 @@ en:
   membership_exists_error: "Membership already exists for {{member}}"
   you_are_a_member_already_error: "You are a member already"
   membership_leave_message: "You have been removed from {{group}}"
-  search_this_group: "Search this group only"
   membership_destroy_confirm_message: "Are you sure you want to remove '{{user}}' from the {{group_type}}?"
 
 
@@ -1014,7 +1034,7 @@ en:
   page_list_heading_last_post: "last post"
   page_list_heading_views: "views"
 
-  page_notice_message: "page sent by {{user}} on {{date}}"
+  page_notice_message: "{{user}} notified you about this page on {{date}}"
   page_with_message: "with message"
   pagination_next: "Next"
   pagination_previous: "Previous"
@@ -1104,7 +1124,8 @@ en:
 
   send_only_with_encryption: "Send only if encrypted distribution is possible"
   share_additional_notification: "Send additional notification via"
-  share_send_notification: "Send notification to inbox"
+  share_send_notification: "Send notification"
+  send_email: "Send Email"
   share_include_message: "Include a custom message"
 
   share_all_checkbox: "Shared with all users"
@@ -1123,11 +1144,11 @@ en:
 
   entity_autocomplete_tip: "Enter the name of a group or person."
 
-  notice_with_message: "with message {{mesage}}"
+  notice_with_message: "with message {{message}}"
 
   # creating
 
-  contribute_content_link: "Contribute"
+  contribute_content_link: "Create Page"
   contribute_group_content_link: "Add Page To {{group}}"
   page_create_owner: "Page Owner"
   create_page_information: "{{page_class}} Information"
@@ -1680,6 +1701,11 @@ en:
   signup_mode_closed_description: "Signup is closed."
   signup_mode_invite_only_description: "Signup is allowed by invitation only."
   signup_mode_verify_email_description: "Anyone can join, but they have to provide a real email address and respond to a verification email."
+
+  sign_up_settings: "Sign Up Settings"
+  profile_settings: "Profile Settings"
+  email_blasts: "Email Blasts"
+
 
   # custom appearances
 

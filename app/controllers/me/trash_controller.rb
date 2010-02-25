@@ -19,8 +19,6 @@ class Me::TrashController < Me::BaseController
     full_url = url_for(:controller => '/me/pages/trash', :action => 'search', :path => @path)
 
     @pages = Page.paginate_by_path(@path.merge(:admin => current_user.id), options_for_me(:page => params[:page], :flow => :deleted))
-    @columns = [:admin_checkbox, :icon, :title, :owner, :deleted_by, :deleted_at, :contributors_count]
-
     @second_nav = 'pages'
     handle_rss(
       :link => full_url,
@@ -31,18 +29,16 @@ class Me::TrashController < Me::BaseController
 
   # post required
   def update
-    pages = params[:page_checked]
+    pages = params[:pages]
     if pages
-      pages.each do |page_id, do_it|
-        if do_it == 'checked' and page_id
-          page = Page.find_by_id(page_id)
-          if page
-            if params[:undelete] and may_undelete_page?(page)
-              page.undelete
-            elsif params[:remove] and may_remove_page?(page)
-              page.destroy
-              ## add more actions here later
-            end
+      pages.each do |page_id|
+        page = Page.find_by_id(page_id)
+        if page
+          if params[:undelete] and may_undelete_page?(page)
+            page.undelete
+          elsif params[:remove] and may_remove_page?(page)
+            page.destroy
+            ## add more actions here later
           end
         end
       end

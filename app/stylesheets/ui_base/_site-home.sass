@@ -3,14 +3,79 @@
 //
 #welcome-container
   +bordered
-  padding: 10px
   width: 744px
+  padding: 10px
   margin-bottom: 10px
 #welcome_box
-  padding: 10px
+  p.description
+    line-height: 1.3
+    padding-top: 6px
+  table
+    margin-top: 10px
 #welcome-links
+  +clearfix
   margin-bottom: 10px
-  
-    
-/* @end */
+  li
+    +inline-list
+  a
+    +blue-link(12px)
+    margin: 0 10px 0 0
+
+//
+// welcome box
+//
+.inset_box
+  +bordered(!light_grey_border)
+  background: #eee url(/images/background/fade-light.png) repeat-x
+  padding: 1em
+  td
+    padding: 0 1em 1em 0
+    vertical-align: top
+    line-height: 1.4
+  .small_icon
+    float: none
+  a 
+    +hover-link
+    color: #4978BC
+    font-size: 14px
+    font-weight: normal 
+    line-height: 1.3     
+                  
+
+//
+// sidebar
+//
+ul.icon_boxes
+  +zero
+  list-style: none
+  li
+    float: left
+    height: 32px
+    width: 32px
+    z-index: auto
+    margin: 5px 4px 0 0
+    span
+      display: none
+      padding: 1em
+      background-color: black
+      color: white
+      font-weight: bold
+      z-index: 10
+      position: absolute
+      top: 4px
+      left: 0
+    div
+      position: relative
+    &:hover span
+      display: inline
+    a
+      display: block
+
+.dash_box
+  float: left
+  margin: 0 2em 1.5em 0
+  div.link_line
+    line-height: 0.8em
+  h5
+    font-weight: normal
 

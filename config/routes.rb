@@ -45,10 +45,9 @@ ActionController::Routing::Routes.draw do |map|
   ## ME
   ##
 
-  map.connect 'me/inbox/:action/*path',     :controller => 'me/inbox'
+  # map.connect 'me/inbox/:action/*path',     :controller => 'me/inbox'
   # map.connect 'me/requests/:action/*path',  :controller => 'me/requests'
-  map.connect 'me/search/*path',            :controller => 'me/search', :action => 'index'
-  map.connect 'me/dashboard/:action/*path', :controller => 'me/dashboard'
+  # map.connect 'me/dashboard/:action/*path', :controller => 'me/dashboard'
   map.connect 'me/tasks/:action/*path',     :controller => 'me/tasks'
   map.connect 'me/infoviz.:format',         :controller => 'me/infoviz', :action => 'visualize'
   map.connect 'me/pages/trash/:action/*path',     :controller => 'me/trash'
@@ -74,15 +73,12 @@ ActionController::Routing::Routes.draw do |map|
 
   end
 
-  # HACK: pretend resources :path_names options works for :collection's and not just :member's
-  # won't have to pretend anymore with rails 2.3.5
-  map.my_work_me_pages '/me/pages/my-work', :action => "my_work", :controller => "pages", :conditions => {:method => :get}
-
   map.resource :me, :only => [:show, :edit, :update], :controller => 'me' do |me|
     me.resources :pages,
       :only => [:new, :update, :index],
       :collection => {
   #      :notification => :get,
+        :my_work => :get,
         :all => :get,
         :mark => :put}
   end
@@ -128,6 +124,7 @@ ActionController::Routing::Routes.draw do |map|
   map.account_verify '/verify_email/:token', :controller => 'account', :action => 'verify_email'
   map.account '/account/:action/:id', :controller => 'account'
 
+  map.search 'search/*path', :controller => 'search', :action => 'index'
   map.connect '', :controller => 'root'
 
   map.connect 'bugreport/submit', :controller => 'bugreport', :action => 'submit'
@@ -164,6 +161,12 @@ ActionController::Routing::Routes.draw do |map|
   ##
 
   map.connect ':controller/:action/:id'
+
+
+  if RAILS_ENV == "development"
+    ## DEBUG ROUTE
+    map.debug_become 'debug/become', :controller => 'debug', :action => 'become'
+  end
 
 
   ##
