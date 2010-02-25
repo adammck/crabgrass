@@ -28,7 +28,7 @@ module UserExtension
         return None unless\
           phone_number
 
-        return SmsMod::send_sms(
+        return ::Rails::Plugin::SmsMod::backend::send_sms(
             phone_number,
             text)
       end
