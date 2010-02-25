@@ -8,7 +8,7 @@ module MenuHelper
   def top_menu(label, url, options={})
     id = options.delete(:id)
     menu_heading = content_tag(:span,
-      link_to_active(label.capitalize, url, options[:active]),
+      link_to_active(label.upcase, url, options[:active]),
       :class => 'topnav'
     )
     content_tag(:li,
@@ -38,13 +38,28 @@ module MenuHelper
   ##
   ## MENUS
   ##
+  ## use url as a path or as an array of paths, if you provide an array of paths
+  ## the first item will be the destination url, the rest are used to highlight the
+  ## tab if is needed
   def menu(label, url, options={})
-    active = options.has_key?(:active) ? options[:active] : (url_for(url) =~ /#{request.path}/i)
+    active = options.delete(:active) if options.has_key?(:active)
+ 
+    ### PLEASE if you change this make sure it doesn't break menus elsewhere, for example:
+    ### people directory, group directory, group pages, etc.
+    if url.is_a?(String) or url.is_a?(Hash)
+      active = url_for(url) =~ /^#{Regexp.escape(request.path)}$/i if active.nil?
+    elsif url.is_a?(Array)
+      active = !url.select { |path| url_for(path).match(/^#{Regexp.escape(request.path)}$/i) ? true : false }.empty? if !active
+      url = url.first
+    else
+      active = false if active.nil?
+    end
+
     selected_class = active ? (options[:selected_class] || 'current') : ''
+    li_options = options.merge({:class => [options.delete(:class), selected_class].join(' ')})
+
     content_tag(:li,
-      link_to(label, url, options),
-      options.merge(
-        { :class => [options[:class], selected_class].join(' ')})
+      link_to(label, url, options), li_options
     )
   end
 
@@ -110,7 +125,7 @@ module MenuHelper
       network_directory_url,
       :active => @active_tab == :networks,
       :menu_items => menu_items('boxes', {
-        :entities => current_user.primary_networks.most_active,
+        :entities => current_user.primary_networks.most_active(@current_site),
         :heading => I18n.t(:my_networks),
         :see_all_url => network_directory_url(:action => 'my'),
         :submenu => 'networks'
@@ -125,82 +140,6 @@ module MenuHelper
 
   def admin_option
     top_menu I18n.t(:menu_admin), '/admin', :active => @active_tab == :admin, :id => 'menu_admin'
-  end
-
-  ##
-  ## MENUS
-  ##
-
-  def menu_home
-    top_menu(
-      'menu_home',
-      I18n.t(:menu_home),
-      '/',
-      :active => @active_tab == :home
-    )
-  end
-
-  def menu_me
-    top_menu(
-      "menu_me",
-      I18n.t(:menu_me),
-      "/me/dashboard",
-      :active => @active_tab == :me,
-      :menu_items => menu_items('me')
-    )
-  end
-
-  def menu_people
-    top_menu(
-      "menu_people",
-      I18n.t(:menu_people),
-      people_directory_url(:friends),
-      :active => @active_tab == :people,
-      :menu_items => menu_items('boxes', {
-        :entities => current_user.friends.most_active,
-        :heading  => I18n.t(:my_contacts),
-        :see_all_url => people_directory_url(:friends),
-        :submenu => 'people'
-      })
-    )
-  end
-
-  def menu_groups
-    top_menu(
-      "menu_groups",
-      I18n.t(:menu_groups),
-      group_directory_url,
-      :active => @active_tab == :groups,
-      :menu_items => menu_items('boxes', {
-        :entities => current_user.primary_groups.most_active,
-        :heading => I18n.t(:my_groups),
-        :see_all_url => group_directory_url(:action => 'my'),
-        :submenu => 'groups'
-      })
-    )
-  end
-
-  def menu_networks
-    top_menu(
-      "menu_networks",
-      I18n.t(:menu_networks),
-      network_directory_url,
-      :active => @active_tab == :networks,
-      :menu_items => menu_items('boxes', {
-        :entities => current_user.primary_networks.most_active,
-        :heading => I18n.t(:my_networks),
-        :see_all_url => network_directory_url(:action => 'my'),
-        :submenu => 'networks'
-      })
-    )
-  end
-
-  def menu_chat
-    top_menu "menu_chat", I18n.t(:menu_chat), '/chat', :active => @active_tab == :chat
-  end
-
-  def menu_admin
-    top_menu "menu_admin", I18n.t(:menu_admin), '/admin', :active => @active_tab == :admin
   end
 
   def split_entities_into_columns(entities)

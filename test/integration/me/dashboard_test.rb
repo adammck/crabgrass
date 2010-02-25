@@ -1,31 +1,11 @@
 require "#{File.dirname(__FILE__)}/../../test_helper"
 
 class Me::DashboardTest < ActionController::IntegrationTest
-  def test_hide_show_welcome_message_persists
-    login 'blue'
-    visit '/me/dashboard'
-
-    assert_contain "Hide Welcome"
-
-    visit '/me/dashboard/close_welcome_box' # simulate an ajax method
-    visit 'me/dashboard'
-
-    assert_contain "Show Welcome"
-    assert_have_no_selector "#welcome_box table"
-
-    # show the welcome again
-    visit '/me/dashboard/show_welcome_box' # simulate an ajax method
-    visit 'me/dashboard'
-
-    assert_contain "Hide Welcome"
-    assert_not_contain "Show Welcome"
-    assert_have_selector "#welcome_box table"
-  end
 
   def test_set_status
     login 'orange'
 
-    visit '/me/dashboard'
+    visit '/me/pages'
     # identify the field by id attribute
     fill_in 'say_text', :with => 'Staying orange here'
     click_button 'Say'

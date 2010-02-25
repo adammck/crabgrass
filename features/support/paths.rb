@@ -1,4 +1,5 @@
 module NavigationHelpers
+  include PageHelper
   # Maps a name to a path. Used by the
   #
   #   When /^I go to (.+)$/ do |page_name|
@@ -18,8 +19,8 @@ module NavigationHelpers
       '/me/dashboard'
     when /my work page/
       '/pages/my_work'
-    when /my notifications page/
-      '/pages/notifications'
+    when /my all pages page/
+      '/pages/all'
     when /my requests page/
       '/me/requests'
     when /the destroyed groups directory/
@@ -46,6 +47,9 @@ module NavigationHelpers
       name = model($1).name
       "/#{name}"
 
+    when /^#{capture_model}(?:'s)? (edit|show) tab$/                      # eg. that wikis pages's edit tab
+      page_url(model($1), :action => $2)
+
     when /^#{capture_model}(?:'s)? administration page$/                     # eg. the groups's landing page
       object = model($1)
       name = object.name
@@ -64,6 +68,9 @@ module NavigationHelpers
     when /^#{capture_model}(?:'s)? (.+?) page$/                     # eg. the forum's posts page
       path_to_pickle $1, :extra => $2                               #  or the forum's edit page
 
+    when /^requests (from me|to me) page$/
+      view = $1.downcase.gsub(' ','_')
+      "/me/requests?view=#{view}"
     ## OTHER PATHS
     when /^the (.+?) page$/                                         # translate to named route
       send "#{$1.downcase.gsub(' ','_')}_path"

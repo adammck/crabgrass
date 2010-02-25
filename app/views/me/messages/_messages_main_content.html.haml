@@ -5,8 +5,11 @@
     = render :partial => 'select_from_form'
 %br
 
-  = render :partial => 'common/action_bar', :locals => {:settings => action_bar_settings, :view_path => messages_path}
-  - action_bar_form(mark_messages_path, messages_path, action_bar_settings) do
+  = action_bar(action_bar_settings)
+  - action_bar_form(mark_messages_path) do
+    = render :partial => '/common/action_bar/hidden_form_fields'
+    = hidden_field_tag('from', params[:from])
+
     %div
       %table#messages{:summary => 'messages'}
         = render :partial => 'message', :collection => @discussions

@@ -19,7 +19,8 @@ enabled_languages:
   - pt
   - ar
 enabled_mods:
-#  - super_admin
+  - super_admin
+  - moderation
 enabled_tools:
   - asset_tool
   - core_tools
@@ -33,25 +34,26 @@ enabled_tools:
   - external_video_tool
   - announcement_tool
   - feed_tool
-email:
-  delivery_method: :smtp
-  smtp_settings:
-    domain: localhost
-    address: smtp.gmail.com
-    port: 587
-    authentication: :plain
-    user_name: xxxxxx@gmail.com
-    password: xxxxxxx
+#email:
+#  delivery_method: :sendmail
+#  smtp_settings:
+#    domain: localhost
+#    address: smtp.gmail.com
+#    port: 587
+#    authentication: :plain
+#    user_name: xxxxxx@gmail.com
+#    password: xxxxxxx
 
 ##
 ## SITES
 ##
 
 sites:
-  - name: blue
-    admin_group: blueadmins
-  - name: red
-    admin_group: redadmins
+  - name: site1 
+    admin_group: rainbow 
+    moderation_group: rainbow
+#  - name: red
+#    admin_group: redadmins
 
 ##
 ## SITE DEFAULTS
@@ -64,7 +66,6 @@ show_exceptions: false
 email_sender: "robot@$current_host"
 tracking: true
 available_page_types:
-  - WikiPage
   - AssetPage
   - EventPage
   - ExternalVideoPage

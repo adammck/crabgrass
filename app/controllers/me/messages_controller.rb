@@ -9,7 +9,7 @@ class Me::MessagesController < Me::BaseController
   helper 'autocomplete', 'javascript', 'action_bar'
 
   before_filter :login_required
-  before_filter :fetch_from_user, :only => :index
+  before_filter :fetch_from_user, :only => [:index, :mark]
   before_filter :fetch_discussion, :only => [:show, :next, :previous]
   before_filter :fetch_recipient, :only => :show
 
@@ -18,7 +18,8 @@ class Me::MessagesController < Me::BaseController
 
   # GET /messages
   def index
-    @discussions = current_user.discussions.with_some_posts.from_user(@from_user).send(view_filter).paginate(page_params)
+    params[:view] ||= 'all'
+    @discussions = find_index_discussions
 
     # used by the new message ajax partial
     @discussion = current_user.discussions.build
@@ -27,6 +28,7 @@ class Me::MessagesController < Me::BaseController
 
   # PUT /messages/mark
   def mark
+    params[:view] ||= 'all'
     mark_as = params[:as].to_sym
     # load several discusssions
     selected_discussions = params[:messages].blank? ? [] : current_user.discussions.find(params[:messages])
@@ -34,7 +36,7 @@ class Me::MessagesController < Me::BaseController
       discussion.mark!(mark_as, current_user)
     end
 
-    @discussions = current_user.discussions.with_some_posts.paginate(page_params)
+    @discussions = find_index_discussions
     render :partial => 'messages_main_content'
   end
 
@@ -42,19 +44,11 @@ class Me::MessagesController < Me::BaseController
   def show
     # show the last page if page param is not set
     # instead of the usual first page
-    default_page = nil
-    if params[:page].blank?
-      total_entries = @discussion.posts.count
-      total_pages = (total_entries.to_f / @discussion.posts.per_page).ceil
-      # total_pages is 0 when total_entries is 0
-      total_pages = 1 if total_pages == 0
-      default_page = total_pages
-    end
+    default_page = params[:page].blank? ? discussion_last_page : nil
 
     # not so RESTful modifying the record on a GET request
-
     @discussion.mark!(:read, current_user)
-    @posts = @discussion.posts.paginate(page_params(default_page, 10))
+    @posts = @discussion.posts.paginate(page_params(default_page, default_per_page))
     @active_tab=:people
   end
 
@@ -73,8 +67,8 @@ class Me::MessagesController < Me::BaseController
   protected
 
   def view_filter
-    # view only :all or :unread messages
-    params[:view].blank? ? :all : params[:view].to_sym
+    # view :all or :unread messages
+    params[:view].to_sym
   end
 
   def redirect_to_message(recipient)
@@ -94,6 +88,20 @@ class Me::MessagesController < Me::BaseController
       add_context(I18n.t(:messages), messages_url)
       add_context(h(@recipient.display_name), message_path(@recipient))
     end
+  end
+
+  def discussion_last_page
+    total_entries = @discussion.posts.count
+    total_pages = (total_entries.to_f / default_per_page).ceil
+
+    # total_pages is 0 when total_entries is 0
+    total_pages = 1 if total_pages == 0
+    total_pages
+  end
+
+  # load discussions based on view filters
+  def find_index_discussions
+    current_user.discussions.with_some_posts.from_user(@from_user).send(view_filter).paginate(page_params)
   end
 
   # trying to do discussion.save! has raised RecordInvalid
@@ -117,9 +125,15 @@ class Me::MessagesController < Me::BaseController
     @recipient = @discussion.user_talking_to(current_user)
   end
 
+
+  def default_per_page
+    10
+  end
+
   # default page when no page param is present can be nil
   # in some cases, it should be the last page
   def page_params(default_page = nil, per_page = nil)
+    per_page ||= default_per_page
     {:page => params[:page] || default_page, :per_page => per_page}
   end
 
