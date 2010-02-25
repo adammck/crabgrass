@@ -5,7 +5,7 @@ module SmsMod
   module Backend
 
     # Load a backend source file by name.
-    def self.load_rb(file_name)
+    def self.load_backend_rb(file_name)
 
       # wouldn't it be easier to just "require" the file? of course it
       # would. but since rails engines loads mods (including this file)
@@ -36,7 +36,7 @@ module SmsMod
     klass_name = file_name.capitalize
 
     # load the backend source
-    Backend.load_rb(file_name)
+    Backend.load_backend_rb(file_name)
 
     # if the backend doesn't exist, raise a specific error, since it's
     # almost certainly a problem with the configuration.
