@@ -8,7 +8,7 @@ class UserTest < ActiveSupport::TestCase
   fixtures :users
 
   VALID_PHONE_NUMBER   = "+1-212-111-2222"
-  INVALID_PHONE_NUMBER = "12345"
+  INVALID_PHONE_NUMBER = "123-LOL-WHAT-456"
 
   def test_mixin_is_working
     assert(users(:blue).respond_to?(:can_receive_sms?),
@@ -22,16 +22,26 @@ class UserTest < ActiveSupport::TestCase
       "field is empty")
   end
 
-  def test_user_accepts_valid_phone_number
-    assert_nothing_raised do
-      User.new(:phone_number => VALID_PHONE_NUMBER).save
-    end
+  def test_user_validates_with_valid_phone_number
+    u = users(:blue)
+    assert_valid(u)
+
+    u.phone_number = VALID_PHONE_NUMBER
+
+    assert_equal(true, u.valid?,
+      "User should validate when the User.phone_number field contains a valid "\
+      "phone number. Errors were: " + u.errors.inspect)
   end
 
-  def test_user_rejects_invalid_phone_number
-    assert_raise do
-      User.new(:phone_number => INVALID_PHONE_NUMBER).save
-    end
+  def test_user_invalidates_with_invalid_phone_number
+    u = users(:blue)
+    assert_valid(u)
+
+    u.phone_number = INVALID_PHONE_NUMBER
+
+    assert_equal(false, u.valid?,
+      "User should not validate when the User.phone_number field contains an "\
+      "invalid phone number")
   end
 
   def test_verified_field_defaults_to_false
@@ -46,7 +56,7 @@ class UserTest < ActiveSupport::TestCase
     user.update_attributes(:phone_number => VALID_PHONE_NUMBER)
 
     assert_equal(false, user.phone_number_verified,
-      "The User.phone_number_verified field should reset to false when "\
+      "the User.phone_number_verified field should reset to false when "\
       "the User.phone_number field is changed")
   end
 end

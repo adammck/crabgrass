@@ -12,7 +12,7 @@ module UserExtension
         validates_format_of(
           :phone_number,
           :allow_blank => true,
-          :with        => /\A(\+[\d\-])\Z/i,
+          :with        => /\A(\+[\d\-]+)\Z/i,
           :message     => "is not a valid phone number")
 
         # protect the :phone_number_verified field, to prevent sneaky
