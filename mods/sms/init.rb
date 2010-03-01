@@ -65,6 +65,6 @@ Dispatcher.to_prepare do
 
   module SmsMod
     config  = load_config
-    backend = spawn_backend(config)
+    BACKEND = spawn_backend(config)
   end
 end

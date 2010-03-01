@@ -15,11 +15,8 @@ class UserTest < ActiveSupport::TestCase
       "the UserExtension::Sms mixin should be applied to User")
   end
 
-  def test_user_with_no_phone_number_cant_send_sms
-    user = User.new(:phone_number => VALID_PHONE_NUMBER)
-    assert_equal(nil, user.send_sms("Hello"),
-      "the User.send_sms method should return nil when the User.phone_number "\
-      "field is empty")
+  def test_sms_mod_doesnt_invalidate_existing_users
+    assert_valid(users(:blue))
   end
 
   def test_user_validates_with_valid_phone_number
@@ -42,6 +39,26 @@ class UserTest < ActiveSupport::TestCase
     assert_equal(false, u.valid?,
       "User should not validate when the User.phone_number field contains an "\
       "invalid phone number")
+  end
+
+  def test_user_with_no_phone_number_cant_send_sms
+    u = users(:blue)
+    assert_nil(u.phone_number)
+
+    assert_equal(nil, u.send_sms("Hello"),
+      "the User.send_sms method should return nil when the User.phone_number "\
+      "field is empty")
+  end
+
+  def test_user_with_invalid_phone_number_cant_send_sms
+    u = users(:blue)
+    assert_nil(u.phone_number)
+
+    u.phone_number = INVALID_PHONE_NUMBER
+
+    assert_equal(nil, u.send_sms("Hello"),
+      "the User.send_sms method should return nil when the User.phone_number "\
+      "field is invalid")
   end
 
   def test_verified_field_defaults_to_false

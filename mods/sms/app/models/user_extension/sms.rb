@@ -34,10 +34,15 @@ module UserExtension
       end
 
       def send_sms(text)
-        return None unless\
-          phone_number
+        valid?
 
-        return ::Rails::Plugin::SmsMod::backend::send_sms(
+        # abort if phone_number appears to be empty or invalid. even
+        # though the backend might accept it anyway, we want all stored
+        # numbers to be strictly validated, to ensure they're routed
+        return nil if errors.on(:phone_number)
+        return nil unless phone_number
+
+        return ::Rails::Plugin::SmsMod::BACKEND.send_sms(
             phone_number,
             text)
       end
