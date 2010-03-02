@@ -9,71 +9,62 @@ class UserTest < ActiveSupport::TestCase
 
   VALID_PHONE_NUMBER   = "+1-212-111-2222"
   INVALID_PHONE_NUMBER = "123-LOL-WHAT-456"
+  SHORT_MESSAGE        = "Hello"
+
 
   def test_mixin_is_working
-    assert(users(:blue).respond_to?(:can_receive_sms?),
-      "the UserExtension::Sms mixin should be applied to User")
+    assert_respond_to users(:blue), :can_receive_sms?
   end
+
 
   def test_sms_mod_doesnt_invalidate_existing_users
-    assert_valid(users(:blue))
+    assert_valid users(:blue)
   end
+
+
+  def test_user_phone_number_defaults_to_nil
+    assert_nil User.new.phone_number
+    assert_nil users(:blue).new.phone_number
+  end
+
 
   def test_user_validates_with_valid_phone_number
-    u = users(:blue)
-    assert_valid(u)
-
-    u.phone_number = VALID_PHONE_NUMBER
-
-    assert_equal(true, u.valid?,
-      "User should validate when the User.phone_number field contains a valid "\
-      "phone number. Errors were: " + u.errors.inspect)
+    user = users(:blue)
+    user.phone_number = VALID_PHONE_NUMBER
+    assert_valid user
   end
+
 
   def test_user_invalidates_with_invalid_phone_number
-    u = users(:blue)
-    assert_valid(u)
-
-    u.phone_number = INVALID_PHONE_NUMBER
-
-    assert_equal(false, u.valid?,
-      "User should not validate when the User.phone_number field contains an "\
-      "invalid phone number")
+    user = users(:blue)
+    user.phone_number = INVALID_PHONE_NUMBER
+    assert_equal false, user.valid?
   end
+
 
   def test_user_with_no_phone_number_cant_send_sms
-    u = users(:blue)
-    assert_nil(u.phone_number)
-
-    assert_equal(nil, u.send_sms("Hello"),
-      "the User.send_sms method should return nil when the User.phone_number "\
-      "field is empty")
+    user = users(:blue)
+    assert_nil user.phone_number
+    assert_nil user.send_sms SHORT_MESSAGE
   end
+
 
   def test_user_with_invalid_phone_number_cant_send_sms
-    u = users(:blue)
-    assert_nil(u.phone_number)
-
-    u.phone_number = INVALID_PHONE_NUMBER
-
-    assert_equal(nil, u.send_sms("Hello"),
-      "the User.send_sms method should return nil when the User.phone_number "\
-      "field is invalid")
+    user = users(:blue)
+    user.phone_number = INVALID_PHONE_NUMBER
+    assert_nil user.send_sms SHORT_MESSAGE
   end
+
 
   def test_verified_field_defaults_to_false
-    assert_equal(false, User.new.phone_number_verified,
-      "the User.phone_number_verified field should default to false")
+    assert_equal false, User.new.phone_number_verified
   end
+
 
   def test_verified_field_resets_when_phone_number_changes
     user = User.new
-
-    user.update_attributes(:phone_number_verified => true)
-    user.update_attributes(:phone_number => VALID_PHONE_NUMBER)
-
-    assert_equal(false, user.phone_number_verified,
-      "the User.phone_number_verified field should reset to false when "\
-      "the User.phone_number field is changed")
+    user.phone_number_verified = true
+    user.phone_number = VALID_PHONE_NUMBER
+    assert_equal false, user.phone_number_verified
   end
 end
