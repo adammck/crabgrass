@@ -11,6 +11,12 @@ class UserTest < ActiveSupport::TestCase
   INVALID_PHONE_NUMBER = "123-LOL-WHAT-456"
   SHORT_MESSAGE        = "Hello"
 
+  # Return the currently active SMS backend (which should be "test", to
+  # avoid actually sending anything while testing).
+  def backend
+    ::Rails::Plugin::SmsMod::BACKEND
+  end
+
 
   def test_mixin_is_working
     assert_respond_to users(:blue), :can_receive_sms?
@@ -66,5 +72,24 @@ class UserTest < ActiveSupport::TestCase
     user.phone_number_verified = true
     user.phone_number = VALID_PHONE_NUMBER
     assert_equal false, user.phone_number_verified
+  end
+
+
+  def test_user_can_send_sms
+    user = User.new
+    user.phone_number = VALID_PHONE_NUMBER
+    user.phone_number_verified = true
+
+    # since we have no idea how many messages the mock backend has sent
+    # until now, we can only assert that it increases by one during this
+    # test. since this could lead to a race-condition (if some other
+    # thread were to send a test message), block the other threads.
+    Thread.exclusive do
+      n = backend.sent.length
+      assert user.send_sms SHORT_MESSAGE
+      assert_equal n+1, backend.sent.length
+      assert_equal backend.send.last[:recipient] = VALID_PHONE_NUMBER
+      assert_equal backend.send.last[:text] = SHORT_MESSAGE
+    end
   end
 end
