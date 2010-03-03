@@ -25,7 +25,16 @@ module SmsMod
   # Return the configuration (a hash) for the current environment.
   def self.load_config
     conf_filename = RAILS_ROOT + "/config/sms.yml"
-    return YAML.load_file(conf_filename)[Rails.env]
+    conf = YAML.load_file(conf_filename)[Rails.env]
+
+    # if we're running in the test environment, and no 'test' section
+    # was provided, fall back to a sane default, so the unit tests will
+    # run without being configured.
+    if Rails.env == "test" && conf.nil?
+      conf = { "backend" => "test" }
+    end
+
+    conf
   end
 
   # Return an instance of the SMS backend for *config*. The class of the
