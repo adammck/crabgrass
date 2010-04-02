@@ -21,7 +21,6 @@ module SmsMod
 
   private
 
-
   # Return the configuration (a hash) for the current environment.
   def self.load_config
     conf_filename = RAILS_ROOT + "/config/sms.yml"
@@ -65,15 +64,14 @@ module SmsMod
     klass = Backend.const_get(klass_name)
     return klass.new(config)
   end
+
+
+  config  = load_config
+  BACKEND = spawn_backend(config)
 end
 
 
 Dispatcher.to_prepare do
   apply_mixin_to_model(User, UserExtension::Sms)
   require "sms_listener"
-
-  module SmsMod
-    config  = load_config
-    BACKEND = spawn_backend(config)
-  end
 end
