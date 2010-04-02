@@ -47,6 +47,7 @@ module UserExtension
             text)
       end
 
+
       private
 
       def generate_phone_number_verification_code(length=4)
@@ -64,7 +65,8 @@ module UserExtension
 
       def verify_new_phone_number
         if phone_number_changed?
-          @phone_number_verified = false
+          phone_number_verified = false
+
           send_sms(
             "To verify your phone number, please respond: %s" %
             generate_phone_number_verification_code)
