@@ -11,7 +11,10 @@ class Test
   end
 
   def send_sms(recipient, text)
-    @sent.push [recipient, text]
+    @sent.push({
+      :recipient => recipient,
+      :text => text })
+
     return true
   end
 
