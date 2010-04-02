@@ -31,9 +31,10 @@ when they receive a message, and respond directly via SMS.
 
   Create config/sms.yml:
     development:
-      backend:     twilio
-      account_sid: YOUR_ACCOUNT_SID
-      auth_token:  YOUR_AUTH_TOKEN
+      backend:       twilio
+      account_sid:   YOUR_ACCOUNT_SID
+      auth_token:    YOUR_AUTH_TOKEN
+      origin_number: YYY-YYY-YYYY
 
 
   === Clickatell
