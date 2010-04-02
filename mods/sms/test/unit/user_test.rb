@@ -11,12 +11,17 @@ class UserTest < ActiveSupport::TestCase
   INVALID_PHONE_NUMBER = "123-LOL-WHAT-456"
   SHORT_MESSAGE        = "Hello"
 
+
+  private
+
   # Return the currently active SMS backend (which should be "test", to
   # avoid actually sending anything while testing).
   def backend
     ::Rails::Plugin::SmsMod::BACKEND
   end
 
+
+  public
 
   def test_mixin_is_working
     assert_respond_to users(:blue), :can_receive_sms?
@@ -30,7 +35,7 @@ class UserTest < ActiveSupport::TestCase
 
   def test_user_phone_number_defaults_to_nil
     assert_nil User.new.phone_number
-    assert_nil users(:blue).new.phone_number
+    assert_nil users(:blue).phone_number
   end
 
 
@@ -68,17 +73,20 @@ class UserTest < ActiveSupport::TestCase
 
 
   def test_verified_field_resets_when_phone_number_changes
-    user = User.new
+    user = users(:blue)
     user.phone_number_verified = true
     user.phone_number = VALID_PHONE_NUMBER
+    user.save
+
     assert_equal false, user.phone_number_verified
   end
 
 
   def test_user_can_send_sms
-    user = User.new
+    user = users(:blue)
     user.phone_number = VALID_PHONE_NUMBER
     user.phone_number_verified = true
+    user.save
 
     # since we have no idea how many messages the mock backend has sent
     # until now, we can only assert that it increases by one during this
@@ -88,8 +96,22 @@ class UserTest < ActiveSupport::TestCase
       n = backend.sent.length
       assert user.send_sms SHORT_MESSAGE
       assert_equal n+1, backend.sent.length
-      assert_equal backend.send.last[:recipient] = VALID_PHONE_NUMBER
-      assert_equal backend.send.last[:text] = SHORT_MESSAGE
+      assert_equal backend.sent.last[:recipient], VALID_PHONE_NUMBER
+      assert_equal backend.sent.last[:text], SHORT_MESSAGE
+    end
+  end
+
+
+  def test_verification_sms_is_sent_when_phone_number_changes
+    Thread.exclusive do
+      user = users(:blue)
+      user.phone_number = VALID_PHONE_NUMBER
+      user.save
+
+      # we can't be sure of the exact text (i18n, etc), but the outgoing
+      # message must contain the verification code, at least.
+      assert backend.sent.last[:text].include?(
+        user.pending_verification_code)
     end
   end
 end
